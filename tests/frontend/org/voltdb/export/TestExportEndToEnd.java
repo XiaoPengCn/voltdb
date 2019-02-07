@@ -93,10 +93,9 @@ public class TestExportEndToEnd extends JUnit4LocalClusterTest {
                             + "  b varchar(32)"
                             + ");");
         TestExportBaseSocketExport.wireupExportTableToSocketExport("export_table");
-        m_cluster = new LocalCluster("testExportRollingRejoin.jar", 2, 2, 1, BackendTarget.NATIVE_EE_JNI);
+        m_cluster = new LocalCluster("testExportRollingRejoin.jar", 2, 2, 1, BackendTarget.NATIVE_EE_JNI_NO_VG);
         m_cluster.setNewCli(true);
         m_cluster.setHasLocalServer(false);
-        m_cluster.overrideAnyRequestForValgrind();
         boolean success = m_cluster.compile(TestExportBaseSocketExport.project);
         assertTrue(success);
         m_cluster.startUp(true);

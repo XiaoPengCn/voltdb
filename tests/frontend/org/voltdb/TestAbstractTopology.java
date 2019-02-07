@@ -815,9 +815,8 @@ public class TestAbstractTopology {
                         " VIOLATION BIGINT DEFAULT '0' NOT NULL," +
                         " CONSTRAINT VIOC ASSUMEUNIQUE ( VIOLATION )," +
                         " PRIMARY KEY (ID)); PARTITION TABLE P1 ON COLUMN ID;";
-        LocalCluster cluster = new LocalCluster(jarName, sph, hostCount, kfactor, BackendTarget.NATIVE_EE_JNI);
+        LocalCluster cluster = new LocalCluster(jarName, sph, hostCount, kfactor, BackendTarget.NATIVE_EE_JNI_NO_VG);
         cluster.setNewCli(true);
-        cluster.overrideAnyRequestForValgrind();
         VoltProjectBuilder builder = new VoltProjectBuilder();
         builder.addLiteralSchema(schema);
         builder.configureLogging(null, null, false, true, 200, Integer.MAX_VALUE, 300);
