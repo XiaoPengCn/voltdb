@@ -102,14 +102,11 @@ public class TestExportWithMisconfiguredExportClient extends RegressionSuite {
     // @throws Exception
     //
     public void testFailureOnMissingNonce() throws Exception {
-        if (isValgrind()) {
-            return;
-        }
         System.out.println("testFailureOnMissingNonce");
 
         m_config.startUp();
         PipeToFile pf = m_config.m_pipes.get(0);
-        Thread.currentThread().sleep(10000);
+        Thread.sleep(10000);
 
         BufferedReader bi = new BufferedReader(new FileReader(new File(pf.m_filename)));
         String line;
@@ -168,7 +165,7 @@ public class TestExportWithMisconfiguredExportClient extends RegressionSuite {
          * compile the catalog all tests start with
          */
         m_config = new LocalCluster("export-ddl-cluster-rep.jar", 8, 1, 0,
-                BackendTarget.NATIVE_EE_JNI, LocalCluster.FailureState.ALL_RUNNING, true, additionalEnv);
+                BackendTarget.NATIVE_EE_JNI_NO_VG, LocalCluster.FailureState.ALL_RUNNING, true, additionalEnv);
         m_config.setExpectedToCrash(true);
         m_config.setHasLocalServer(false);
         boolean compile = m_config.compile(project);

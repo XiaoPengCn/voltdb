@@ -74,9 +74,6 @@ public class TestExportLoopbackClient extends TestExportBaseSocketExport {
     // @throws Exception
     //
     public void testExportLoopbackData() throws Exception {
-        if (isValgrind()) {
-            return;
-        }
         System.out.println("testExportLoopbackData");
         Client client = getClient();
         while (!((ClientImpl) client).isHashinatorInitialized()) {
@@ -193,7 +190,7 @@ public class TestExportLoopbackClient extends TestExportBaseSocketExport {
          * compile the catalog all tests start with
          */
         config = new LocalCluster("export-ddl-cluster-rep.jar", 4, 1, k_factor,
-                BackendTarget.NATIVE_EE_JNI, LocalCluster.FailureState.ALL_RUNNING, true, additionalEnv);
+                BackendTarget.NATIVE_EE_JNI_NO_VG, LocalCluster.FailureState.ALL_RUNNING, true, additionalEnv);
         config.setHasLocalServer(false);
         boolean compile = config.compile(project);
         assertTrue(compile);

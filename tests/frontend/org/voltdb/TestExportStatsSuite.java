@@ -252,9 +252,6 @@ public class TestExportStatsSuite extends TestExportBaseSocketExport {
     // @throws Exception
     //
     public void testExportSnapshotTruncatesExportData() throws Exception {
-        if (isValgrind()) {
-            return;
-        }
         System.out.println("testExportSnapshotTruncatesExportData");
         Client client = getClient();
         while (!((ClientImpl) client).isHashinatorInitialized()) {
@@ -371,7 +368,7 @@ public class TestExportStatsSuite extends TestExportBaseSocketExport {
 
         // A catalog change that enables snapshots
         config = new LocalCluster("export-ddl-cluster-rep2.jar",  2, 1, KFACTOR,
-                BackendTarget.NATIVE_EE_JNI, LocalCluster.FailureState.ALL_RUNNING, true, additionalEnv);
+                BackendTarget.NATIVE_EE_JNI_NO_VG, LocalCluster.FailureState.ALL_RUNNING, true, additionalEnv);
         project = new VoltProjectBuilder();
         project.setSecurityEnabled(true, true);
         project.addRoles(GROUPS);

@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.voltdb.client.Client;
 import org.voltdb.client.ClientImpl;
-import org.voltdb.client.ClientResponse;
 import org.voltdb.client.ProcCallException;
 import org.voltdb.compiler.VoltProjectBuilder;
 import org.voltdb.export.ExportDataProcessor;
@@ -73,21 +72,17 @@ public class TestExportConstraintsSuite extends TestExportBaseSocketExport {
     }
 
     public void testExportConstraints() throws Exception {
-        if (isValgrind()) {
-            return;
-        }
         System.out.println("testExportConstraints");
         Client client = getClient();
         while (!((ClientImpl) client).isHashinatorInitialized()) {
             Thread.sleep(1000);
             System.out.println("Waiting for hashinator to be initialized...");
         }
-        ClientResponse response;
-        response = client.callProcedure("@AdHoc", "create stream inotnull partition on column i (i integer not null)");
-        response = client.callProcedure("@AdHoc", "create stream varcharlimit partition on column i (i varchar(2) not null)");
+        client.callProcedure("@AdHoc", "create stream inotnull partition on column i (i integer not null)");
+        client.callProcedure("@AdHoc", "create stream varcharlimit partition on column i (i varchar(2) not null)");
         boolean thrown = false;
         try {
-            response = client.callProcedure("@AdHoc", "insert into inotnull values(null)");
+            client.callProcedure("@AdHoc", "insert into inotnull values(null)");
         } catch (ProcCallException pce) {
             assertTrue(pce.getClientResponse().getStatusString().contains("CONSTRAINT VIOLATION"));
             thrown = true;
@@ -96,7 +91,7 @@ public class TestExportConstraintsSuite extends TestExportBaseSocketExport {
 
         thrown = false;
         try {
-            response = client.callProcedure("@AdHoc", "insert into inotnull values(6.5)");
+            client.callProcedure("@AdHoc", "insert into inotnull values(6.5)");
         } catch (ProcCallException pce) {
             thrown = true;
         }
@@ -104,7 +99,7 @@ public class TestExportConstraintsSuite extends TestExportBaseSocketExport {
 
         thrown = false;
         try {
-            response = client.callProcedure("@AdHoc", "insert into varcharlimit values(NULL)");
+            client.callProcedure("@AdHoc", "insert into varcharlimit values(NULL)");
         } catch (ProcCallException pce) {
             assertTrue(pce.getClientResponse().getStatusString().contains("CONSTRAINT VIOLATION"));
             thrown = true;
@@ -113,7 +108,7 @@ public class TestExportConstraintsSuite extends TestExportBaseSocketExport {
 
         thrown = false;
         try {
-            response = client.callProcedure("@AdHoc", "insert into varcharlimit values('123')");
+            client.callProcedure("@AdHoc", "insert into varcharlimit values('123')");
         } catch (ProcCallException pce) {
             thrown = true;
         }
@@ -151,7 +146,7 @@ public class TestExportConstraintsSuite extends TestExportBaseSocketExport {
          * compile the catalog all tests start with
          */
         config = new LocalCluster("export-constraints.jar", 4, 1, k_factor,
-                BackendTarget.NATIVE_EE_JNI, LocalCluster.FailureState.ALL_RUNNING, true, additionalEnv);
+                BackendTarget.NATIVE_EE_JNI_NO_VG, LocalCluster.FailureState.ALL_RUNNING, true, additionalEnv);
         config.setHasLocalServer(false);
         boolean compile = config.compile(project);
         assertTrue(compile);
