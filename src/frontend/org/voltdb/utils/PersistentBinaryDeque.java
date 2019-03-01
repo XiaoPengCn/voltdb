@@ -36,7 +36,6 @@ import org.voltdb.EELibraryLoader;
 import org.voltdb.HybridCrc32;
 import org.voltdb.export.ExportSequenceNumberTracker;
 import org.voltdb.utils.BinaryDeque.TruncatorResponse.Status;
-import org.voltdb.utils.PBDSegment.PBDSegmentReader;
 import org.voltdb.utils.PairSequencer.CyclicSequenceException;
 
 import com.google_voltpatches.common.base.Throwables;
