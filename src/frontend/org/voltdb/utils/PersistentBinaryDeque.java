@@ -275,6 +275,16 @@ public class PersistentBinaryDeque implements BinaryDeque {
                 assertions();
                 moveToValidSegment();
                 PBDSegmentReader segmentReader = m_segment.getReader(m_cursorId);
+                // If cursor points to a deleted segment, looks for next segment until finds a valid one
+                long lastSegmentId = peekLastSegment().segmentIndex();
+                while (!m_segment.file().exists()) {
+                    // Tail segment should always exists
+                    if (m_segment.segmentIndex() == lastSegmentId) {
+                        throw new IOException("Tail segment file " + m_segment.file().getName() + " doesn't exist! ");
+                    }
+                    m_segment = m_segments.higherEntry(m_segment.segmentIndex()).getValue();
+                }
+                // push to PBD will rewind cursors. So, this cursor may have already opened this segment
                 if (segmentReader == null) {
                     segmentReader = m_segment.openForRead(m_cursorId);
                 }
