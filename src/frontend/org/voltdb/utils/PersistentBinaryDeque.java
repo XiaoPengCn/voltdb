@@ -135,13 +135,12 @@ public class PersistentBinaryDeque implements BinaryDeque {
                 if (m_closed) {
                     throw new IOException("PBD.ReadCursor.poll(): " + m_cursorId + " - Reader has been closed");
                 }
-                assertions();
-
                 moveToValidSegment();
                 PBDSegmentReader segmentReader = m_segment.getReader(m_cursorId);
                 if (segmentReader == null) {
                     segmentReader = m_segment.openForRead(m_cursorId);
                 }
+                assert (segmentReader.readIndex() == 0);
                 long lastSegmentId = peekLastSegment().segmentIndex();
                 while (!segmentReader.hasMoreEntries()) {
                     if (m_segment.segmentIndex() == lastSegmentId) { // nothing more to read

@@ -42,6 +42,7 @@ import com.google_voltpatches.common.base.Preconditions;
  */
 public class PBDRegularSegment extends PBDSegment {
     private static final VoltLogger LOG = new VoltLogger("HOST");
+    private static final VoltLogger exportLog = new VoltLogger("EXPORT");
 
     private final Map<String, SegmentReader> m_readCursors = new HashMap<>();
     private final Map<String, SegmentReader> m_closedCursors = new HashMap<>();
@@ -194,11 +195,22 @@ public class PBDRegularSegment extends PBDSegment {
         // Those asserts ensure the file is opened with correct flag
         if (emptyFile) {
             initNumEntries(0, 0);
-            m_fc.position(SEGMENT_HEADER_BYTES);
-            m_writeOffset = SEGMENT_HEADER_BYTES;
-        } else if (forWrite) {
-            m_fc.position(m_writeOffset);
+
         }
+        if (forWrite) {
+            m_fc.position(m_writeOffset);
+        } else {
+            m_fc.position(SEGMENT_HEADER_BYTES);
+        }
+        if (exportLog.isDebugEnabled()) {
+            exportLog.debug("Open PBD Segment " + m_file.getName() +
+                    " for " + (forWrite ? "write" : "read") +
+                    " position set to " + m_fc.position());
+            for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+                exportLog.debug(ste);
+            }
+        }
+
 
         m_closed = false;
     }
@@ -258,8 +270,18 @@ public class PBDRegularSegment extends PBDSegment {
 
     @Override
     public void close() throws IOException {
+        if (exportLog.isDebugEnabled()) {
+            exportLog.debug("Close PBD Segment " + m_file.getName());
+            for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+                exportLog.debug(ste);
+            }
+        }
         if (m_fc != null) {
             m_writeOffset = m_fc.position();
+            if (exportLog.isDebugEnabled()) {
+                exportLog.debug("Close PBD Segment " + m_file.getName() +
+                        " set writeOffset to " + m_writeOffset);
+            }
         }
         m_closedCursors.clear();
         closeReadersAndFile();
