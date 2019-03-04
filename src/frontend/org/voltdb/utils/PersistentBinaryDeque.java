@@ -155,7 +155,7 @@ public class PersistentBinaryDeque implements BinaryDeque {
                 }
                 BBContainer retcont = segmentReader.getSchema(ocf, checkCRC);
                 assert (retcont.b() != null);
-                return wrapRetCont(m_segment, retcont);
+                return retcont;
             }
         }
 
