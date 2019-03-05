@@ -55,7 +55,6 @@ public class PBDRegularSegment extends PBDSegment {
 
     private int m_numOfEntries = -1;
     private int m_size = -1;
-    private long m_writeOffset = SEGMENT_HEADER_BYTES;
 
     private DBBPool.BBContainer m_segmentHeaderBuf = null;
     private DBBPool.BBContainer m_entryHeaderBuf = null;
@@ -198,19 +197,10 @@ public class PBDRegularSegment extends PBDSegment {
 
         }
         if (forWrite) {
-            m_fc.position(m_writeOffset);
+            m_fc.position(m_fc.size());
         } else {
             m_fc.position(SEGMENT_HEADER_BYTES);
         }
-        if (exportLog.isDebugEnabled()) {
-            exportLog.debug("Open PBD Segment " + m_file.getName() +
-                    " for " + (forWrite ? "write" : "read") +
-                    " position set to " + m_fc.position());
-            for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-                exportLog.debug(ste);
-            }
-        }
-
 
         m_closed = false;
     }
@@ -270,19 +260,6 @@ public class PBDRegularSegment extends PBDSegment {
 
     @Override
     public void close() throws IOException {
-        if (exportLog.isDebugEnabled()) {
-            exportLog.debug("Close PBD Segment " + m_file.getName());
-            for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-                exportLog.debug(ste);
-            }
-        }
-        if (m_fc != null) {
-            m_writeOffset = m_fc.position();
-            if (exportLog.isDebugEnabled()) {
-                exportLog.debug("Close PBD Segment " + m_file.getName() +
-                        " set writeOffset to " + m_writeOffset);
-            }
-        }
         m_closedCursors.clear();
         closeReadersAndFile();
     }
